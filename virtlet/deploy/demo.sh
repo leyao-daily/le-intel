@@ -68,60 +68,6 @@ function demo::step {
   fi
 }
 
-function demo::ask-before-continuing {
-  if [[ ! ${NONINTERACTIVE} ]]; then
-    echo "Press Enter to continue or Ctrl-C to stop." >&2
-    read
-  fi
-}
-
-function demo::ask-user {
-  if [[ ${1:-} = "" ]]; then
-    echo "no prompt message provided" >&2
-    exit 1
-  fi
-
-  if [[ ${2:-} = "" ]]; then
-    echo "no return var name provided" >&2
-    exit 1
-  fi
-
-  local  __resultvar=$2
-  local reply="false"
-  while true; do
-    read -p "$(tput bold)$(tput setaf 3) ${1} (yY/nN): $(tput sgr0)" reply
-    case $reply in
-      Y|y) reply="true"; break;;
-      N|n) echo "Abort"; reply="false"; break;;
-      *) echo "Please answer y[Y] or n[N].";;
-    esac
-  done
-  eval $__resultvar="'$reply'"
-}
-
-function demo::get-dind-cluster {
-  download="false"
-  if [[ -f ${kdc_script} ]]; then
-    demo::step "Will update ${kdc_script} script to the latest version"
-    if [[ ! ${NONINTERACTIVE} ]]; then
-        demo::ask-user "Do you want to redownload ${kdc_script} ?" download
-        if [[ ${download} = "true" ]]; then
-          rm "${kdc_script}"
-        fi
-    else
-       demo::step "Will now clear existing ${kdc_script}"
-       rm "${kdc_script}"
-    fi
-  fi
-
-  if [[ ${download} = "true" ]]; then
-    demo::step "Will download ${kdc_script} into current directory"
-    demo::ask-before-continuing
-    wget -O "${kdc_script}" "${kdc_url}"
-    chmod +x "${kdc_script}"
-  fi
-}
-
 function demo::get-cirros-ssh-keys {
   if [[ -f ${cirros_key} ]]; then
     return 0
@@ -137,7 +83,6 @@ function demo::start-dind-cluster {
     echo "Cirros ssh connection will be open after Virtlet setup is complete, press Ctrl-D to disconnect." >&2
   fi
   echo "To clean up the cluster, use './dind-cluster-v${KUBE_VERSION}.sh clean'" >&2
-  demo::ask-before-continuing
   "./${kdc_script}" clean
   "./${kdc_script}" up
 }
@@ -431,7 +376,6 @@ EOF
   exit 0
 fi
 
-demo::get-dind-cluster
 if [[ ${MULTI_CNI} ]]; then
   export NUM_NODES=1
   export CNI_PLUGIN=flannel
