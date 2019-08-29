@@ -1,4 +1,5 @@
-sudo -i
+#! /bin/bash
+
 #Download the required openvino toolkit package 
 wget http://registrationcenter-download.intel.com/akdlm/irc_nas/15792/l_openvino_toolkit_p_2019.2.275.tgz
 
@@ -19,10 +20,8 @@ sudo -E ./install_openvino_dependencies.sh
 #Set the Environment Variables
 cd /root
 #source /opt/intel/openvino/bin/setupvars.sh
-vim .bashrc
-
 #Add to the end of the file
-source /opt/intel/openvino/bin/setupvars.sh
+sed -i '$a source /opt/intel/openvino/bin/setupvars.sh' .bashrc
 
 #----------------------------------------------------------#
 #Configure the Model Optimizer
