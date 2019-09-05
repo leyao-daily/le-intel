@@ -4,17 +4,21 @@
 #Setup environments needed
 sudo systemctl stop apparmor
 sudo systemctl disable apparmor
+swapoff -a
 
 #Install CRI Proxy
 wget https://github.com/Mirantis/criproxy/releases/download/v0.14.0/criproxy_0.14.0_amd64.deb
 dpkg -i criproxy_0.14.0_amd64.deb
 
+wget https://raw.githubusercontent.com/leyao-daily/le-intel/master/virtlet/deploy/server/criproxy.service
 
+mv criproxy.service /etc/systemd/system/
 
 systemctl stop kubelet
 systemctl daemon-reload
 systemctl enable criproxy dockershim
 systemctl start criproxy dockershim
+systemctl start kubelet
 
 #Virtlet Installation
 kubectl label node ubuntu extraRuntime=virtlet
