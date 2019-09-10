@@ -1,0 +1,11 @@
+# interfaces(5) file used by ifup(8) and ifdown(8)
+auto lo
+iface lo inet loopback
+auto eno1
+iface eno1 inet static
+address 192.168.222.1
+netmask 255.255.255.0
+auto enx00e04c534458
+iface enx00e04c534458 inet dhcp
+ 
+pre-up iptables-restore < /etc/iptables.roles
