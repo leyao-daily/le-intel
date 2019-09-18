@@ -12,8 +12,6 @@ dpkg -i criproxy_0.14.0_amd64.deb
 
 wget https://raw.githubusercontent.com/leyao-daily/le-intel/master/virtlet/deploy/server/criproxy.service
 
-mv criproxy.service /etc/systemd/system/
-
 systemctl stop kubelet
 systemctl daemon-reload
 systemctl enable criproxy dockershim

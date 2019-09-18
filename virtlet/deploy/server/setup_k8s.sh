@@ -1,5 +1,10 @@
 #! /bin/bash
 
+#Prepare
+swapoff -a
+systemctl status apparmor.service
+systemctl disable apparmor.service
+
 #-------------------------------------------------------------#
 #Docker Installation
 
