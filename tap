@@ -1,0 +1,52 @@
+VM Network Setup Diagram
++--------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|               +-------------------+                                                                                             Virlet                       |
+|               | VM                 |                                                                                            network                      |
+|               |                    | Qemu process                                                                               namespace                    |
+|               | +---+ eth{0,1,...} |                                                                                                                         |
+|               | +---+ ip addr set  |                                                                                                                         |
+|               |   /\               |                                                                                                                         |
+|               | VM                |                                                                                             network                      |
+|               |                   | Qemu process                                                                                namespace                    |
+|               | +---+ eth0        |                                                                                                                          |
+|               | +---+ ip addr set |                                                                                                                          |
+|               |   /\              |                                                                                                                          |
+|               +---||--------------+                                                                                                                          |
+|                   \/                                                                                                                                         |
+|               FDs of the tap devices                                                                                                                         |
+|               FD of the tap device                                                                                                                           |
+|                                                                                                                                                              |
+|                                                                                                                                                              |
+|               +--------------------------------------------------------------------------------------------------+                                           |
+|               |                                                                                                  |                                           |
+|               |                                                            virtlet-eth0 (veth netns end          |                 veth0 (veth host end      |
+|               |          +---+ tap0            +---+ br0             +---+ created by CNI)                       |           +---+ created by CNI)           |
+|               |          |   |-----------------|   |-----------------|   |---------------------------------------------------|   | ip addr set               |
+|               |          +---+                 +---+                 +---+                                       |           +---+                           |
+|               |                              169.254.254.2/24                                                    |                                           |
+|               |                                                                                                  |                                           |
+|               |                                                      +---+ SR-IOV VF                             |           +---+ SR-IOV host master device |
+|               |                                                      |   |---------------------------------------------------|   |                           |
+|               |                                                      +---+                                       |           +---+                           |
+|               |                                                                                                  |                                           |
+|               |                +-------------------+                                                             |                                           |
+|               |                |local dhcp server  |                                                             |                                           |
+|               |                +-------------------+                                      pod's netns            |                                           |
+|               +--------------------------------------------------------------------------------------------------+                                           |
+|                                                                                                                                                              |
++--------------------------------------------------------------------------------------------------------------------------------------------------------------+
+Virtlet uses the specified CNI plugin which is expected to create veth pair with one end belonging topairs for each configured network with one end belonging to the pod network namespace. A special case is SR-IOV plugin which puts a Virtual Function into the pod network namespace.
+
+On RunPodSandBox request Virtlet requests tapmanager process to set up the networking for the VM by sending it a command over its Unix domain socket
+tapmanager sets up the network according to the above diagram (see below for more details)
+tapmanager returns network configuration info which is used by Virtlet to set up Cloud-Init network config
+When the VM is started, Virtlet wraps the emulator using vmwrapper program which it passes VIRTLET_NET_KEY environment variable containing the key the was used by tapmanager to set up the network.
+vmwrapper uses the key to ask tapmanager to send it the file descriptors for the tap interfaces or the description of SR-IOV VFs over tapmanager's Unix domain socket. It then extends emulator command line arguments to make it use the tap devices/VFs and then execs the emulator.
+Upon StopPodSandbox, Virtlet requests tapmanager to tear down the VM network.
+The rationale for having separate tapmanager process is the well-known Go namespace problem. It's expected that the problem will be fixed by Go 1.10 release, after which it will be possible to dumb down tapmanager request processing and run it as a goroutine (so it can use channels etc. to communicate with Virtlet side). Currently tapmanager is starting automatically by virtlet command using the same virtlet binary.
+
+Calico CNI plugin needs special treatment as it tries to pass a routing configuration that cannot be passed over DHCP. For it to work Virtlet patches Calico-provided CNI result, replacing Calico's unreachable fake gateway with another fake gateway with an IP address acquired from Calico IPAM. A proper node subnet must be set for Calico-based virtlet installations. It's controlled by calico-subnet key Virtlet configmap (denoting the number of 1s in the netmask) and defaults to 24.
+
+SR-IOV CNI plugin requires running qemu emulator with full root privileges, so that needs to be manually enabled during Virtlet deployment by setting VIRTLET_SRIOV_SUPPORT environment variable to a non-empty value for the virtlet container. In case if standard deploy/virtlet-ds.yaml is used, this can be done by settingsriov_support=true in virtlet-config ConfigMap.
+
+NOTE: Virtlet doesn't support hostNetwork pod setting because it cannot be impelemntedimplemented for VM in a meaningful way.
