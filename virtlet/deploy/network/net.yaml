@@ -1,0 +1,17 @@
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: sriovnet2
+  namespace: kube-system
+spec:
+  config: '{
+    "cniVersion": "0.3.1",
+    "name": "sriovnet2",
+    "type": "sriov",
+    "deviceID": "0000:3d:06.2",
+    "ipam": {
+            "type": "host-local",
+            "subnet": "10.56.206.0/24"
+    }
+  }'
+
