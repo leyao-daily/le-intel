@@ -1,9 +1,3 @@
-#Change default python2 to python3
-sudo update-alternatives --install /usr/bin/python python /usr/bin/python2 100
-sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 150
-
-#sudo update-alternatives --config python
-
 echo "OpenCV installation"
 
 #Specify OpenCV version
@@ -101,3 +95,4 @@ cmake -D CMAKE_BUILD_TYPE=RELEASE \
 
 make -j4
 make install
+
