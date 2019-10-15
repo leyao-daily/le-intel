@@ -38,7 +38,7 @@ sudo apt install libopencore-amrnb-dev libopencore-amrwb-dev
 sudo apt-get install libdc1394-22 libdc1394-22-dev libxine2-dev libv4l-dev v4l-utils
 cd /usr/include/linux
 sudo ln -s -f ../libv4l1-videodev.h videodev.h
-cd 
+cd "$cwd" 
 
 #GTK lib for the graphical user functionalites coming from OpenCV highghui module
 sudo apt-get install libgtk-3-dev
@@ -89,16 +89,16 @@ cd opencv
 mkdir build
 cd build
 
-#cmake -D CMAKE_BUILD_TYPE=RELEASE \
-#    -D CMAKE_INSTALL_PREFIX=/usr/local \
-#    -D INSTALL_C_EXAMPLES=ON \
-#    -D INSTALL_PYTHON_EXAMPLES=ON \
-#    -D OPENCV_GENERATE_PKGCONFIG=ON \
-#    -D OPENCV_EXTRA_MODULES_PATH=~/opencv_build/opencv_contrib/modules \
-#    -D OPENCV_PYTHON3_INSTALL_PATH=$cwd/OpenCV-$cvVersion-py3/lib/python3.6/site-packages \
-#    -D BUILD_EXAMPLES=ON ..
+cmake -D CMAKE_BUILD_TYPE=RELEASE \
+    -D CMAKE_INSTALL_PREFIX=/usr/local \
+    -D INSTALL_C_EXAMPLES=ON \
+    -D INSTALL_PYTHON_EXAMPLES=ON \
+    -D OPENCV_GENERATE_PKGCONFIG=ON \
+    -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules \
+    -D OPENCV_PYTHON3_INSTALL_PATH=$cwd/OpenCV-$cvVersion-py3/lib/python3.6/site-packages \
+    -D BUILD_EXAMPLES=ON ..
 
 #Make and install
-#make -j4
-#sudo make install
+make -j4
+make install
 
