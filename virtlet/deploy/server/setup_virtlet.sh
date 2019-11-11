@@ -10,7 +10,6 @@ swapoff -a
 wget https://github.com/Mirantis/criproxy/releases/download/v0.14.0/criproxy_0.14.0_amd64.deb
 dpkg -i criproxy_0.14.0_amd64.deb
 
-wget https://raw.githubusercontent.com/leyao-daily/le-intel/master/virtlet/deploy/server/criproxy.service
 
 systemctl stop kubelet
 systemctl daemon-reload
@@ -29,5 +28,7 @@ curl -SL -o virtletctl https://github.com/Mirantis/virtlet/releases/download/v1.
 
 chmod +x virtletctl
 
-./virtletctl gen | kubectl apply -f -
+kubectl create configmap -n kube-system virtlet-config --from-literal=sriov_support=true
+
+kubectl apply -f ./le-intel/virtlet/deploy/images/virtlet-daemonset.yaml
 
