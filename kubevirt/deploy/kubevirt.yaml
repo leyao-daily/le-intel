@@ -653,7 +653,7 @@ spec:
         - --subresources-only
         - -v
         - "2"
-        image: index.docker.io/kubevirt/virt-api@sha256:749faa249c612d582d9188b70ca4e4c47cc2971c4aad18ec47b213976f84b807
+        image: 192.168.121.138:5000/myrepo/virt-api:mybuild
         imagePullPolicy: IfNotPresent
         name: virt-api
         ports:
@@ -715,12 +715,12 @@ spec:
       - command:
         - virt-controller
         - --launcher-image
-        - index.docker.io/kubevirt/virt-launcher@sha256:a776ee4a4159e37c20a763b7cc25848feb894c5a56de3b0616e202e7d4d06539
+        - 192.168.121.138:5000/myrepo/virt-launcher:mybuild
         - --port
         - "8443"
         - -v
         - "2"
-        image: index.docker.io/kubevirt/virt-controller@sha256:0ae48094bba096f1f31fc8141f67a5fe6ad9601bf1e27e40ea9109edb8c21419
+        image: 192.168.121.138:5000/myrepo/virt-controller:mybuild
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 8
@@ -793,7 +793,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.podIP
-        image: index.docker.io/kubevirt/virt-handler@sha256:2f752f1c99688250d687eb8b84b2d2784c6c14ce88451341d8960fc3549c1eae
+        image: 192.168.121.138:5000/myrepo/virt-handler:mybuild
         imagePullPolicy: IfNotPresent
         name: virt-handler
         ports:
