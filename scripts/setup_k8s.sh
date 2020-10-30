@@ -16,7 +16,7 @@ sudo apt-get remove docker docker-engine docker.io containerd runc
 
 ##setup apt environments
 sudo apt-get update
-sudo apt-get install \
+sudo apt-get install -y \
     apt-transport-https \
     ca-certificates \
     curl \
@@ -34,7 +34,7 @@ sudo add-apt-repository \
 
 ##Installation
 sudo apt-get update
-sudo apt-get install docker-ce docker-ce-cli containerd.io
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 
 #-------------------------------------------------------------#
 #Kubernetes Installation
@@ -46,7 +46,7 @@ cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
 deb https://apt.kubernetes.io/ kubernetes-xenial main
 EOF
 apt-get update
-apt-get install -y kubelet=${VERSION}-00 kubeadm=${VERSION}-00 kubectl={VERSION}-00
+apt-get install -y kubelet=${VERSION}-00 kubeadm=${VERSION}-00 kubectl=${VERSION}-00
 apt-mark hold kubelet kubeadm kubectl
 
 ##restart kubelet
