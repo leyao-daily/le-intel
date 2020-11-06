@@ -112,6 +112,7 @@ data:
     {
       "name": "multus-cni-network",
       "type": "multus",
+      "cniVersion": "0.3.1",
       "capabilities": {
         "portMappings": true
       },
@@ -122,7 +123,7 @@ data:
           "plugins": [
             {
               "name": "k8s-pod-network",
-              "cniVersion": "0.3.1,
+              "cniVersion": "0.3.1",
               "type": "calico",
               "log_level": "info",
               "datastore_type": "kubernetes",

@@ -68,8 +68,8 @@ source <(kubectl completion bash)
 echo "source <(kubectl completion bash)" >> ~/.bashrc
 
 ##pod network add-on flannel
-wget https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
-kubectl apply -f kube-flannel.yml
+#wget https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+#kubectl apply -f kube-flannel.yml
 
 ##Pod network with cni-proxy multus and calico as default network
 kubectl apply -f ../network/calico/calico.yaml
