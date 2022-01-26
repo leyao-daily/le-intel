@@ -1,7 +1,7 @@
 #! /bin/bash
 
 #You can define the Kubernetes Version here
-VERSION=1.19.3
+VERSION=1.23.2
 
 #Prepare
 swapoff -a
@@ -40,11 +40,10 @@ sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 #Kubernetes Installation
 
 ##installing kubeadm, kubelet and kubectl
-apt-get update && apt-get install -y apt-transport-https curl
-curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
-deb https://apt.kubernetes.io/ kubernetes-xenial main
-EOF
+##installing kubeadm, kubelet and kubectl
+apt-get update && apt-get install -y apt-transport-https curl ca-certificates
+sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 apt-get update
 apt-get install -y kubelet=${VERSION}-00 kubeadm=${VERSION}-00 kubectl=${VERSION}-00
 apt-mark hold kubelet kubeadm kubectl
