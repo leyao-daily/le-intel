@@ -1,9 +1,12 @@
 #! /bin/bash
 
 #You can define the Kubernetes Version here
-VERSION=1.23.4
+VERSION=1.25.3
 
 #Prepare
+modprobe br_netfilter
+sysctl -w net.bridge.bridge-nf-call-ip6tables=1
+sysctl -w net.bridge.bridge-nf-call-iptables=1
 swapoff -a
 systemctl status apparmor.service
 systemctl disable apparmor.service
@@ -52,7 +55,7 @@ systemctl daemon-reload
 systemctl restart kubelet
 
 ##create master node
-kubeadm init --pod-network-cidr 10.233.64.0/18  --kubernetes-version=v${VERSION}
+kubeadm init --pod-network-cidr 10.244.0.0/16  --kubernetes-version=v${VERSION}
 
 ##configure env
 mkdir -p $HOME/.kube
@@ -74,4 +77,5 @@ kubectl apply -f ../network/calico/calico.yaml
 kubectl apply -f ../network/calico/multus-daemonset.yaml
 
 ##control plane node isolation
-kubectl taint nodes --all node-role.kubernetes.io/master-
+# kubectl taint nodes --all node-role.kubernetes.io/master-
+kubectl taint node --all node-role.kubernetes.io/control-plane-
