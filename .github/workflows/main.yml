@@ -13,6 +13,6 @@ jobs:
       uses: hadolint/hadolint-action@v3.1.0
       with:
         # The path to the Dockerfile to lint
-        dockerfile: Dockerfile
+        dockerfile: './**/Dockerfile'
         recursive: true
         config: ./.hadolint.yaml
