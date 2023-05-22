@@ -1,0 +1,15 @@
+[Unit]
+Description=CRI Proxy
+Wants=dockershim.service
+
+[Service]
+Environment="CRI_PRIMARY=/var/run/dockershim.sock"
+Environment="CRI_OTHER=virtlet.cloud:/run/virtlet.sock"
+EnvironmentFile=-/etc/default/criproxy
+ExecStart=/usr/bin/criproxy -logtostderr -connect ${CRI_PRIMARY},${CRI_OTHER} -listen /run/criproxy.sock
+Restart=always
+StartLimitInterval=0
+RestartSec=10
+
+[Install]
+WantedBy=kubelet.service
